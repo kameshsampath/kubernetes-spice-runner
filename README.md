@@ -1,15 +1,17 @@
 # Kubernetes Demo Project Template
 
-The template project for all Kubernetes and OpenShift Demos.
+The template project for all Kubernetes demos using minikube.
 
 The project provides basic cluster setup for minikube. To configure the cluster with extra components
 you can use the Ansible roles:
 
 - [kameshsampath.k8s_app_spices](https://github.com/kameshsampath/ansible-role-kubernetes-spices)
-- [kameshsampath.openshift_app_spices](https://github.com/kameshsampath/ansible-role-openshift-spices)
+
+If you are looking for provisioing for OpenShift, then use [OpenShift Spice Runner](https://github.com/kameshsampath/openshift-spice-runner)
 
 ## Pre-requsites
 
+- [Docker](https://docs.docker.com/get-docker/) or [podman](https://podman.io/)
 - [minikube](https://kubernetes.io/docs/tasks/tools/install-minikube/)
 - [kubectl](https://kubernetes.io/docs/reference/kubectl/overview/)
 
