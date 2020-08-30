@@ -1,0 +1,70 @@
+---
+- name: Add Tasks and Cluster Tasks
+  hosts: localhost
+  connection: local
+
+  collections:
+    - community.kubernetes
+
+  vars:
+    tektoncd_tasks_dir: /tmp/tektoncd/tasks
+
+    cluster_tasks:
+      - name: buildah
+        manifest_url: "https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml"
+      - name: maven
+        manifest_url: "https://raw.githubusercontent.com/tektoncd/catalog/master/task/maven/0.1/maven.yaml"
+      - name: kn
+        manifest_url: "https://raw.githubusercontent.com/tektoncd/catalog/master/task/kn/0.1/kn.yaml"
+      - name: git-clone
+        manifest_url: "https://raw.githubusercontent.com/tektoncd/catalog/master/task/git-clone/0.1/git-clone.yaml"
+      - name: openshift-client
+        manifest_url: "https://raw.githubusercontent.com/tektoncd/catalog/master/task/openshift-client/0.1/openshift-client.yaml"
+
+    tektoncd_tasks:
+      - name: image-updater
+        manifest_url: "https://raw.githubusercontent.com/gitops-tools/image-updater/main/tekton/image-updater.yaml"
+        target_namespace: demos
+  
+  tasks:
+    - name: Create Manifests Dir
+      file:
+        path: "{{ tektoncd_tasks_dir }}"
+        state: directory
+
+    - name: Download Task manifests
+      get_url:
+        url: "{{ item.manifest_url }}"
+        dest: "{{ [tektoncd_tasks_dir,item.name] | join('/') }}.yaml"
+        mode: "666"
+      with_items: 
+       - "{{ cluster_tasks }}"
+       - "{{ tektoncd_tasks }}"
+
+    - name: Convert Task to Cluster Tasks
+      replace:
+        path: "{{ [tektoncd_tasks_dir,item.name] | join('/') }}.yaml"
+        regexp: '(^kind:\s*)Task$'
+        replace: '\1ClusterTask'
+        backup: yes
+      with_items: "{{ cluster_tasks }}"
+
+    - name: Deploy Cluster Tasks
+      community.kubernetes.k8s:
+        state: present
+        src: "{{ [tektoncd_tasks_dir,item.name] | join('/') }}.yaml"
+      with_items: "{{ cluster_tasks }}"
+
+    - name: Create Task Namespaces
+      community.kubernetes.k8s:
+        state: present
+        kind: Namespace
+        name: "{{ item.target_namespace }}"
+      with_items: "{{ tektoncd_tasks }}"
+
+    - name: Deploy Tasks
+      community.kubernetes.k8s:
+        state: present
+        src: "{{ [tektoncd_tasks_dir,item.name] | join('/') }}.yaml"
+        namespace: "{{ item.target_namespace }}"
+      with_items: "{{ tektoncd_tasks }}"

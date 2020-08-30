@@ -1,0 +1,17 @@
+---
+roles:
+  - name: kameshsampath.kind
+    src: https://github.com/kameshsampath/ansible-role-kind
+    version: master
+  - name: kameshsampath.minikube
+    src: https://github.com/kameshsampath/ansible-role-minikube
+    version: master
+  - name: kameshsampath.k8s_app_spices
+    src: https://github.com/kameshsampath/ansible-role-kubernetes-spices
+    version: master
+  - name: kameshsampath.openshift_app_spices
+    src: https://github.com/kameshsampath/ansible-role-openshift-spices
+    version: master
+collections:
+  - name: community.kubernetes
+    version: 1.0.0
