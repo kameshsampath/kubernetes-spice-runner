@@ -24,9 +24,8 @@ bin
 *~
 
 # Cluster files
-**/cluster/.kube/*
-**/cluster/env/*
-**/cluster/inventory/*
-**/project/*.yml
-!**/project/requirements.yml
-!**/project/requirements.txt
+**/project/.kube/*
+**/project/.tool-version
+env
+!env/*.example
+
