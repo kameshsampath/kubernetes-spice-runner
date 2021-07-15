@@ -1,73 +1,27 @@
-# Kubernetes Demo Project Template
+# Kubernetes Spice Runner
 
-The template project for all Kubernetes demos using minikube.
+The directory structure follows the [Ansible Runner Directory](https://ansible-runner.readthedocs.io/en/stable/intro.html#runner-input-directory-hierarchy) structure.
 
-The project provides basic cluster setup for minikube. To configure the cluster with extra components
-you can use the Ansible roles:
+The ansible parameters for the playbooks is detailed in [Kubernetes Spices Collection](https://kameshsampath.github.io/kubernetes_spices/ansible-kubernetes-spices/index.html).
 
-- [kameshsampath.k8s_app_spices](https://github.com/kameshsampath/ansible-role-kubernetes-spices)
+All the variables that you need pass to the Ansible playbooks can be specified in `$PROJECT_HOME/hack/extravars`. Make a copy of `$PROJECT_HOME/hack/env/extravars.example` to `$PROJECT_HOME/hack/env/extravars`, and set the values as needed for the components that you wish to install from Kubernetes spices. e.g., If you wish to install Gloo Edge then your extra vars will look like
 
-If you are looking for provisioing for OpenShift, then use [OpenShift Spice Runner](https://github.com/kameshsampath/openshift-spice-runner)
-
-## Pre-requsites
-
-- [Docker](https://docs.docker.com/get-docker/) or [podman](https://podman.io/)
-- [minikube](https://kubernetes.io/docs/tasks/tools/install-minikube/)
-- [kubectl](https://kubernetes.io/docs/reference/kubectl/overview/)
-
-__NOTE__: Based on your configuration you might need other tools like:
-
-- [Tekton CLI](https://github.com/tektoncd/cli)
-- [Knative Client](https://github.com/knative/client)
-- [Argo CD CLI](https://argoproj.github.io/argo-cd/cli_installation/)
-
-## Configuration
-
-All configuration are done using $PROJECT_HOME/.cluster/.env:
-
-| Variable | Description | Default
-| -------- | ----------- | -------
-| *KUBECONFIG* | The Kubeconfig file to be used with minikube  | /runner/.kube/config
-| *RUNNER_PLAYBOOK* | The cluster configuration playbook, this file will be searched in $REPO_HOME/project folder. Just filename is suffice. | playbook.yml |
-| *PROFILE_NAME* | The minikube profile name | my-demos |
-| *MEMORY* | The memory to allocate for minikube |8192 |
-| *CPUS*| The cpus to allocate for minikube | 5 |
-
-__NOTE__:
-
-- The *runner* is the directory that is mounted within the Ansible Runner, for local use point the KUBECONFIG to $PWD/.kube/config
-
-## Make Targets
-
-The [makefile](./cluster/Makefile) provides the following targets:
-
-- *provision* - Creates a minikube cluster with profile name
-- *configure* - Creates a minikube cluster with profile name
-- *unprovision* - Deletes the created minikube cluster
-
-### Examples
-
-Copy the `$REPO_HOME/cluster/examples/knative.yml` to `$REPO_HOME/cluster/project/playbook.yml` and run:
-
-To provision a cluster with Knative run:
-
-```shell
-cd $REPO_HOME/cluster
-make provision && make configure
+```yaml
+kind_home_dir: /home/runner/.kube
+cluster_name: gloo-edge-demo
+kind_create: true
+deploy_gloo_edge: true
+# set gloo license key 
+gloo_license_key:  my gloo license key
 ```
 
-Copy the `$REPO_HOME/cluster/examples/knative_tekto_argo.yml` to `$REPO_HOME/cluster/project/playbook.yml` and run:
+`kind_home_dir` ensures that the generated files for cluster are saved to `$PROJECT_HOME/hack/.kube/<cluster-name>`.
 
-To provision a cluster with Tekton, Knative and Argo CD run:
+Typically, there will be two files:
 
-```shell
-cd $REPO_HOME/cluster
-make provision && make configure
-```
+* The `kubeconfig` file for the cluster
+* The KinD configuration file
 
-## Tutorials
+If [fzf](https://github.com/junegunn/fzf) is available as part of the system, the script will list the possible playbooks from the `$PROJECT_HOME/hack/project` directory.
 
-Based on the installation the following Tutorials might be of of help:
-
-- [Knative Tutorial](https://dn.dev/knative-tutorial)
-- [Tekton Tutorial](https://dn.dev/tekton-tutorial)
+Once the cluster is created it also sets and exports the `KUBECONFIG` to the local `$PROJECT_HOME/.kube/config`

@@ -1,0 +1,28 @@
+---
+- name: "Fruits API"
+  hosts: localhost
+  connection: local
+
+  collections:
+    - kubernetes.core
+    - kameshsampath.kubernetes_spices
+
+  vars:
+    cluster_name: demo-ap-south-1
+    kind_create: true
+    ####
+    ## Gloo Edge Configuration
+    ####
+    # Gloo Edge Setup
+    deploy_gloo_edge: true
+    gloo_write_namespace: my-gloo
+    # gloo_discovery_enabled: false
+    gloo_edge_edition: ee
+    gloo_watch_namespaces:
+      - demo-1
+      - demo-2
+    gloo_proxy_nodeport: true
+
+  roles:
+    - kameshsampath.kubernetes_spices.kind
+    - kameshsampath.kubernetes_spices.k8s_app_spices

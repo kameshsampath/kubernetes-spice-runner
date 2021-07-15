@@ -26,6 +26,7 @@ bin
 # Cluster files
 **/project/.kube/*
 **/project/.tool-version
-env
+env/**
 !env/*.example
 
+.tool-versions
