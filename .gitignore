@@ -25,6 +25,9 @@ bin
 
 # Cluster files
 **/project/.kube/*
+**/project/**
+!project/playbook.yml
+!project/run.sh
 **/project/.tool-version
 env/**
 !env/*.example

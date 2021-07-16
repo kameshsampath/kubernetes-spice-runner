@@ -6,7 +6,7 @@ set -o pipefail
 
 CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 CONTAINER_CMD=${CONTAINER_CMD:-docker}
-ANSIBLE_RUNNER_IMAGE=${ANSIBLE_RUNNER_IMAGE:-quay.io/kameshsampath/kubernetes-spices-ansible-runner:v0.0.10}
+ANSIBLE_RUNNER_IMAGE=${ANSIBLE_RUNNER_IMAGE:-quay.io/kameshsampath/kubernetes-spices-ansible-runner:v0.0.12}
 KUBECONFIG=${KUBECONFIG:-~/.kube/config}
 RUNNER_PLAYBOOK=playbook.yml
 

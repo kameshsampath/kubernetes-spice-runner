@@ -1,5 +1,5 @@
 ---
-- name: "Fruits API"
+- name: "KinD Demo Cluster 1"
   hosts: localhost
   connection: local
 
@@ -8,21 +8,10 @@
     - kameshsampath.kubernetes_spices
 
   vars:
-    cluster_name: demo-ap-south-1
+    cluster_name: cluster-1
     kind_create: true
-    ####
-    ## Gloo Edge Configuration
-    ####
-    # Gloo Edge Setup
-    deploy_gloo_edge: true
-    gloo_write_namespace: my-gloo
-    # gloo_discovery_enabled: false
-    gloo_edge_edition: ee
-    gloo_watch_namespaces:
-      - demo-1
-      - demo-2
-    gloo_proxy_nodeport: true
-
+    # Add your neded configuration here
+    # https://kameshsampath.github.io/kubernetes_spices
   roles:
     - kameshsampath.kubernetes_spices.kind
     - kameshsampath.kubernetes_spices.k8s_app_spices
