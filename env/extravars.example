@@ -1,11 +1,3 @@
 ---
+# set this to sync container and local file system
 kind_home_dir: /home/runner/.kube
-k8s_contexts:
- - foo
- - bar
-
-# create gloo
-deploy_gloo_edge: true
-
-# gloo_license_key
-gloo_license_key: <your gloo license key>

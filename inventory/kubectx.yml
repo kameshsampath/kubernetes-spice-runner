@@ -1,0 +1,5 @@
+plugin: kameshsampath.kubernetes_spices.kubectx
+# Add the contexts from the kubeconfig file to which
+# you want to apply kube components
+# To get list of contexts run kubectl config get-contexts -o name
+use_contexts: []

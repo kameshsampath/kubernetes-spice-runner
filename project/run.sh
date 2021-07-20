@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
-set -e
-
-set -o pipefail
+set -eou pipefail
 
 RUNNER_PLAYBOOK=${RUNNER_PLAYBOOK:-playbook.yml}
+
+ansible-runner run -p "$RUNNER_PLAYBOOK" /runner
 
 # Merge all kubeconfigs to /home/.kube/config
 export KUBECONFIG
@@ -18,5 +18,3 @@ do
 done <   <(find /home/runner/.kube -name 'config' -type f -print0)
 
 kubectl config view --flatten > /home/runner/.kube/config
-
-ansible-runner run -p "$RUNNER_PLAYBOOK" /runner

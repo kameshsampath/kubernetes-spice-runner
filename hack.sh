@@ -1,29 +1,28 @@
 #!/usr/bin/env bash
-set -x 
-set -e
 
-set -o pipefail
+set -eou pipefail
 
 CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 CONTAINER_CMD=${CONTAINER_CMD:-docker}
-ANSIBLE_RUNNER_IMAGE=${ANSIBLE_RUNNER_IMAGE:-quay.io/kameshsampath/kubernetes-spices-ansible-runner:v0.0.12}
+ANSIBLE_RUNNER_IMAGE=${ANSIBLE_RUNNER_IMAGE:-quay.io/kameshsampath/kubernetes-spices-ansible-runner:v0.1.2}
 KUBECONFIG=${KUBECONFIG:-~/.kube/config}
 RUNNER_PLAYBOOK=playbook.yml
 
-# force pull
-$CONTAINER_CMD pull "$ANSIBLE_RUNNER_IMAGE" &> /dev/null
+# uncomment this force pull
+# $CONTAINER_CMD pull "$ANSIBLE_RUNNER_IMAGE" &> /dev/null
 
-if [ ! -d "$CURRENT_DIR/.kube" ];
-then
-  mkdir -p "$CURRENT_DIR/.kube"
-fi
+export KUBECONFIG
+
+mkdir -p "$CURRENT_DIR/.kube"
 
 pushd "$CURRENT_DIR/project" &>/dev/null
 
 if command -v fzf &>/dev/null; then
-  RUNNER_PLAYBOOK=$(fzf +i -q "kind | playbook")
+  RUNNER_PLAYBOOK=$(fzf +i -q "playbook | cloud")
   pushd -1 &>/dev/null
 fi
+
+kubectl config view --flatten > "$CURRENT_DIR/.kube/config"
 
 $CONTAINER_CMD run --name="kubernetes-spice-ansible-runner" \
   -it --rm --net=host \
@@ -40,4 +39,4 @@ then
   chmod 0644 "$CURRENT_DIR/.kube/config"
 fi
 
-export KUBECONFIG="$CURRENT_DIR/.kube/config"
+KUBECONFIG="$KUBECONFIG:$CURRENT_DIR/.kube/config"

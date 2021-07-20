@@ -1,17 +1,41 @@
 ---
-- name: "KinD Demo Cluster 1"
-  hosts: localhost
+# This runs only for clusters that are built and run locally
+# e.g. KinD
+- name: "Local Cloud"
+  hosts: kind
   connection: local
 
   collections:
     - kubernetes.core
     - kameshsampath.kubernetes_spices
-
   vars:
-    cluster_name: cluster-1
+    ansible_python_interpreter: "{{ ansible_playbook_python }}"
     kind_create: true
-    # Add your neded configuration here
-    # https://kameshsampath.github.io/kubernetes_spices
+    cluster_name: gloo-edge-demo
   roles:
-    - kameshsampath.kubernetes_spices.kind
-    - kameshsampath.kubernetes_spices.k8s_app_spices
+    - name: kameshsampath.kubernetes_spices.kind
+# Applies stack to all the cloud
+- name: "Spice the Cloud"
+  hosts: spices
+  connection: local
+
+  collections:
+    - kubernetes.core
+    - kameshsampath.kubernetes_spices
+  vars:
+    ansible_python_interpreter: "{{ ansible_playbook_python }}"
+    ####
+    ## Gloo Edge Configuration
+    ####
+    # Deploy Gloo Edge
+    deploy_gloo_edge: true
+    gloo_write_namespace: my-gloo
+    # gloo_discovery_enabled: false
+    gloo_edge_edition: ee
+    gloo_watch_namespaces:
+      - bookinfo
+    # expects the license key to available as an environment variable
+    # GLOO_LICENSE_KEY
+    gloo_license_key: "{{ ansible_env.GLOO_LICENSE_KEY }}"
+  roles:
+    - name: kameshsampath.kubernetes_spices.k8s_app_spices
